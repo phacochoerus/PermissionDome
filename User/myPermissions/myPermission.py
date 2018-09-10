@@ -1,12 +1,12 @@
 from rest_framework import permissions
 
 
-def getPermStr(Slef,request):
+def getPermStr(Slef,request,view):
     method = Slef.action
     if method == "retrieve":
-        method = "get+"
+        pass
     elif method == "list":
-        method = "get"
+        pass
     elif method == "update":
         method = "put"
     elif method == "create":
@@ -22,9 +22,7 @@ def getPermStr(Slef,request):
     except:
         url_name = url_list[-2]
 
-
-    permStr = "User.Students.%s"%(url_name+"."+method)
-
+    permStr = view.perm_group[0] + "." + method + "." + url_name
     return permStr
 
 
@@ -32,5 +30,5 @@ def getPermStr(Slef,request):
 class isUserPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        permStr = getPermStr(view,request)
+        permStr = getPermStr(view,request,view)
         return request.user.has_perm("User.%s"%permStr)

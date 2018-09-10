@@ -8,7 +8,7 @@ from User import views
 from User.myPermissions.permissionViewSet import getPermissionsList,setPermissions
 
 studentRouter = routers.DefaultRouter()
-studentRouter.register('', studentViewSet.studentViewSet, base_name='servers')
+studentRouter.register('', studentViewSet.studentViewSet)
 
 
 

@@ -26,17 +26,21 @@ from django.shortcuts import get_object_or_404,get_list_or_404
 
 class getPermissionsList(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
-    def get(self,request):
+    def post(self,request):
+        username = request.data["username"]
         queryset_perm = Permission.objects.filter(codename__icontains="User.")
         dict_perm = {}
-        list_perm = []
+        obj_user = get_object_or_404(models.UserProfile, username=username)
         for foo in queryset_perm:
             name_list = foo.name.split(".")
+            print(name_list)
             if name_list[0] not in dict_perm:
                 dict_perm[name_list[0]] = {}
             if name_list[1] not in dict_perm[name_list[0]]:
-                dict_perm[name_list[0]][name_list[1]] = []
-            dict_perm[name_list[0]][name_list[1]].append(name_list[2])
+                dict_perm[name_list[0]][name_list[1]] = {}
+            has = obj_user.has_perm("User.%s"%foo.codename)
+            print(has)
+            dict_perm[name_list[0]][name_list[1]].update({name_list[2]:has})
         print(dict_perm)
         return Response({"code":status.HTTP_200_OK,"success":True,"msg":"权限列表","results":dict_perm},status=status.HTTP_200_OK)
 
@@ -51,8 +55,8 @@ class setPermissions(APIView):
         for k,v in dict_perm["perm"]["User"].items():
             for k1,v1 in v.items():
                 str = "User." + k + "." + k1
-                obj_perm = Permission.objects.filter(name__icontains=str).first()
-                if v1 == 1:
+                obj_perm = Permission.objects.filter(codename__icontains=str).first()
+                if v1:
                     obj_group.permissions.add(obj_perm)
                 else:
                     obj_group.permissions.remove(obj_perm)

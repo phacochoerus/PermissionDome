@@ -14,7 +14,6 @@ class studentsSerializer(DynamicFieldsMixin,serializers.ModelSerializer):
         model = models.UserProfile
         fields = ["username","password"]
 
-
     def create(self, validated_data):
         user = models.UserProfile.objects.create_user(username=validated_data["username"],password=validated_data["password"])
         models.Students.objects.create(user=user)

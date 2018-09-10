@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse,get_object_or_404
 from django.contrib.auth.models import Permission,Group
 from User import models
-
+from django.urls import reverse,resolve
 
 
 
@@ -11,7 +11,6 @@ def getUserPermission(request):
     return HttpResponse("拿到用户所有的权限")
 
 def judgeUserPermission(request):
-    # obj_perm = Permission.objects.get(codename="User.Students.studentsviewset.post")
     obj_user = get_object_or_404(models.UserProfile,username="student1")
     has = obj_user.has_perm("User.User.Students.studentsviewset.post")
     print(has)

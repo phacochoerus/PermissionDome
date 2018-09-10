@@ -12,7 +12,7 @@ from User.students import studentSerializer
 from User.myPermissions import myPermission
 from django.contrib.auth.models import Permission
 from rest_framework import permissions
-
+from django.urls import reverse
 
 
 class studentViewSet(mixins.CreateModelMixin,
@@ -26,11 +26,10 @@ class studentViewSet(mixins.CreateModelMixin,
     queryset = models.UserProfile.objects.all()
     serializer_class = studentSerializer.studentsSerializer
     pagination_class = MyPageNumberPagination
-
+    perm_group = ["User.Students",]
 
 
     def initial(self, request, *args, **kwargs):
-        print(request.META)
         self.format_kwarg = self.get_format_suffix(**kwargs)
         neg = self.perform_content_negotiation(request)
         request.accepted_renderer, request.accepted_media_type = neg
