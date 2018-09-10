@@ -21,6 +21,7 @@ urlpatterns = [
     path('getUserPermission/', views.getUserPermission),
     path('addGroupPermissions/', views.addGroupPermissions),
     path('judgeUserPermission/', views.judgeUserPermission),
+    path('judgeGroupPermission/', views.judgeGroupPermission.as_view()),
     path('getPermissionsList/', getPermissionsList.as_view()),
     path('setPermissions/', setPermissions.as_view()),
 

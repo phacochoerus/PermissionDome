@@ -27,10 +27,11 @@ from django.shortcuts import get_object_or_404,get_list_or_404
 class getPermissionsList(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     def post(self,request):
-        username = request.data["username"]
+        group = request.data["group"]
         queryset_perm = Permission.objects.filter(codename__icontains="User.")
         dict_perm = {}
-        obj_user = get_object_or_404(models.UserProfile, username=username)
+        obj_group = get_object_or_404(Group, name=group)
+        queryset_group = obj_group.permissions.all()
         for foo in queryset_perm:
             name_list = foo.name.split(".")
             print(name_list)
@@ -38,8 +39,10 @@ class getPermissionsList(APIView):
                 dict_perm[name_list[0]] = {}
             if name_list[1] not in dict_perm[name_list[0]]:
                 dict_perm[name_list[0]][name_list[1]] = {}
-            has = obj_user.has_perm("User.%s"%foo.codename)
-            print(has)
+            if foo in queryset_group:
+                has = True
+            else:
+                has = False
             dict_perm[name_list[0]][name_list[1]].update({name_list[2]:has})
         print(dict_perm)
         return Response({"code":status.HTTP_200_OK,"success":True,"msg":"权限列表","results":dict_perm},status=status.HTTP_200_OK)
