@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.contrib.auth.models import Permission,Group
-
-def getPermStr(Slef,request,view):
+from django.shortcuts import get_object_or_404
+def getPermStr(Slef,request):
     method = Slef.action
     if method == "retrieve":
         pass
@@ -22,7 +22,7 @@ def getPermStr(Slef,request,view):
     except:
         url_name = url_list[-2]
 
-    obj_perm = Permission.objects.filter(codename__icontains=method + "." + url_name).first()
+    obj_perm = get_object_or_404(Permission,codename__icontains=method + "." + url_name)
     return obj_perm.codename
 
 
@@ -30,5 +30,5 @@ def getPermStr(Slef,request,view):
 class isUserPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        permStr = getPermStr(view,request,view)
-        return request.user.has_perm("User.%s"%permStr)
+        permStr = getPermStr(view,request)
+        return request.user.has_perm(view.app_name[0]+"."+permStr)

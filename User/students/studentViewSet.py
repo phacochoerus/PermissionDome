@@ -22,11 +22,11 @@ class studentViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
                    GenericViewSet):
     authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,myPermission.isUserPermissions)
+    permission_classes = (permissions.IsAuthenticated,myPermission.isUserPermissions,)
     queryset = models.UserProfile.objects.all()
     serializer_class = studentSerializer.studentsSerializer
     pagination_class = MyPageNumberPagination
-    perm_group = ["User.Students",]
+    app_name = ["User",]
 
 
     def initial(self, request, *args, **kwargs):
