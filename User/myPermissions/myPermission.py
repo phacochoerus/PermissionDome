@@ -1,5 +1,5 @@
 from rest_framework import permissions
-
+from django.contrib.auth.models import Permission,Group
 
 def getPermStr(Slef,request,view):
     method = Slef.action
@@ -22,8 +22,8 @@ def getPermStr(Slef,request,view):
     except:
         url_name = url_list[-2]
 
-    permStr = view.perm_group[0] + "." + method + "." + url_name
-    return permStr
+    obj_perm = Permission.objects.filter(codename__icontains=method + "." + url_name).first()
+    return obj_perm.codename
 
 
 
